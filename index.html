@@ -3,234 +3,121 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Building AR Viewer</title>
+  <title>NTIC Building — AR Viewer</title>
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      background: #0f1923;
-      font-family: 'Segoe UI', sans-serif;
-      color: white;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#0a0f1a;font-family:'Segoe UI',sans-serif;color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+
+    header{width:100%;background:linear-gradient(135deg,#0d1b2a,#1a2f4a);padding:20px 24px;text-align:center;border-bottom:2px solid #4a9fd4;box-shadow:0 4px 30px rgba(74,159,212,0.3)}
+    header h1{font-size:1.5rem;font-weight:700;color:#4a9fd4;letter-spacing:2px;text-transform:uppercase}
+    header p{font-size:0.8rem;color:#7ab4cc;margin-top:5px;letter-spacing:1px}
+
+    .container{width:100%;max-width:960px;padding:20px;flex:1;display:flex;flex-direction:column;gap:16px}
+
+    model-viewer{
+      width:100%;height:70vh;
+      border-radius:20px;
+      border:1px solid rgba(74,159,212,0.4);
+      background:radial-gradient(ellipse at center, #1a3a5c 0%, #0a1525 100%);
+      box-shadow:0 0 60px rgba(74,159,212,0.15);
+      --poster-color:transparent;
     }
 
-    header {
-      width: 100%;
-      background: linear-gradient(135deg, #1a2a3a, #0d1f2d);
-      padding: 18px 24px;
-      text-align: center;
-      border-bottom: 2px solid #2a9fd6;
-      box-shadow: 0 4px 20px rgba(42,159,214,0.3);
+    .ar-btn{
+      background:linear-gradient(135deg,#4a9fd4,#2a7ab0);
+      color:#fff;border:none;
+      padding:16px 36px;border-radius:50px;
+      font-size:1.05rem;font-weight:700;
+      cursor:pointer;letter-spacing:0.5px;
+      box-shadow:0 4px 25px rgba(74,159,212,0.5);
+      transition:all 0.2s;
+      display:flex;align-items:center;gap:10px;
     }
+    .ar-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(74,159,212,0.7)}
 
-    header h1 {
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: #2a9fd6;
-      letter-spacing: 1px;
-    }
+    .cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media(max-width:600px){.cards{grid-template-columns:1fr}}
 
-    header p {
-      font-size: 0.8rem;
-      color: #8ab4c8;
-      margin-top: 4px;
-    }
+    .card{background:#0d1b2a;border-radius:14px;padding:16px;border:1px solid rgba(74,159,212,0.2)}
+    .card h3{color:#4a9fd4;font-size:0.9rem;margin-bottom:10px;display:flex;align-items:center;gap:6px}
 
-    .viewer-container {
-      width: 100%;
-      max-width: 900px;
-      padding: 20px;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
+    .steps{display:flex;flex-direction:column;gap:8px}
+    .step{display:flex;align-items:flex-start;gap:10px;font-size:0.82rem;color:#8ab4cc;line-height:1.5}
+    .num{background:#4a9fd4;color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:700;flex-shrink:0;margin-top:1px}
 
-    model-viewer {
-      width: 100%;
-      height: 65vh;
-      border-radius: 16px;
-      border: 1px solid #2a9fd6;
-      background: linear-gradient(180deg, #1a2f3f 0%, #0d1923 100%);
-      box-shadow: 0 8px 40px rgba(42,159,214,0.2);
-      --poster-color: transparent;
-    }
+    .legend{display:flex;flex-direction:column;gap:7px}
+    .leg{display:flex;align-items:center;gap:8px;font-size:0.82rem;color:#8ab4cc}
+    .dot{width:14px;height:14px;border-radius:4px;flex-shrink:0}
 
-    .ar-btn-wrapper {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
+    .stats{display:flex;justify-content:space-around;text-align:center}
+    .stat-val{font-size:1.4rem;font-weight:700;color:#4a9fd4}
+    .stat-lbl{font-size:0.72rem;color:#7ab4cc;margin-top:2px}
 
-    .ar-button {
-      background: linear-gradient(135deg, #2a9fd6, #1a7aaa);
-      color: white;
-      border: none;
-      padding: 14px 32px;
-      border-radius: 50px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      letter-spacing: 0.5px;
-      box-shadow: 0 4px 20px rgba(42,159,214,0.4);
-      transition: transform 0.2s, box-shadow 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .ar-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 25px rgba(42,159,214,0.6);
-    }
-
-    .info-card {
-      background: #1a2a3a;
-      border-radius: 12px;
-      padding: 16px 20px;
-      border: 1px solid #2a3f52;
-      font-size: 0.85rem;
-      color: #8ab4c8;
-      line-height: 1.6;
-    }
-
-    .info-card strong {
-      color: #2a9fd6;
-      display: block;
-      margin-bottom: 6px;
-      font-size: 0.95rem;
-    }
-
-    .steps {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 6px;
-    }
-
-    .step {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-    }
-
-    .step-num {
-      background: #2a9fd6;
-      color: white;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.75rem;
-      font-weight: 700;
-      flex-shrink: 0;
-      margin-top: 1px;
-    }
-
-    .legend {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.8rem;
-    }
-
-    .legend-dot {
-      width: 14px;
-      height: 14px;
-      border-radius: 3px;
-      flex-shrink: 0;
-    }
-
-    footer {
-      padding: 16px;
-      font-size: 0.75rem;
-      color: #4a6a7a;
-      text-align: center;
-    }
+    footer{padding:16px;font-size:0.72rem;color:#3a5a6a;text-align:center}
   </style>
 </head>
 <body>
-
 <header>
-  <h1>🏛️ Building AR Viewer</h1>
-  <p>Interactive 3D Model · Augmented Reality Ready</p>
+  <h1>🏛 NTIC Building</h1>
+  <p>Interactive 3D Model · Augmented Reality Experience</p>
 </header>
 
-<div class="viewer-container">
+<div class="container">
 
   <model-viewer
-    id="viewer"
-    src="wissal_rami_v3.glb"
-    alt="3D Building Model"
+    src="wissal_rami_v4.glb"
+    alt="NTIC Building 3D Model"
     ar
     ar-modes="webxr scene-viewer quick-look"
     camera-controls
     auto-rotate
-    auto-rotate-delay="1000"
-    rotation-per-second="20deg"
-    shadow-intensity="1.2"
-    shadow-softness="0.8"
-    exposure="1.1"
+    auto-rotate-delay="500"
+    rotation-per-second="15deg"
+    shadow-intensity="1.5"
+    shadow-softness="0.6"
+    exposure="1.2"
     environment-image="legacy"
-    style="--progress-bar-color: #2a9fd6;"
+    camera-orbit="45deg 75deg 80m"
   >
-    <button slot="ar-button" class="ar-button">
-      📱 View in AR (Place on Table)
-    </button>
+    <button slot="ar-button" class="ar-btn">📱 View in AR — Place on Table</button>
   </model-viewer>
 
-  <div class="info-card">
-    <strong>📱 How to use AR on your Android phone</strong>
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <span>Make sure both files (<b>building_ar_viewer.html</b> and <b>wissal_rami_v3.glb</b>) are in the <b>same folder</b> on your phone</span>
+  <div class="cards">
+    <div class="card">
+      <h3>📱 How to use AR</h3>
+      <div class="steps">
+        <div class="step"><div class="num">1</div><span>Open this page on <b>Chrome Android</b></span></div>
+        <div class="step"><div class="num">2</div><span>Tap <b>"View in AR"</b> button above</span></div>
+        <div class="step"><div class="num">3</div><span>Point camera at a <b>flat surface</b> (table)</span></div>
+        <div class="step"><div class="num">4</div><span>Tap to <b>place</b> the building — walk around it!</span></div>
       </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <span>Open <b>Chrome</b> on your Android phone → tap the menu → <b>Open file</b> → select this HTML file</span>
+    </div>
+
+    <div class="card">
+      <h3>🎨 Color Legend</h3>
+      <div class="legend">
+        <div class="leg"><div class="dot" style="background:#f7f2e6;border:1px solid #ccc"></div>Exterior Walls</div>
+        <div class="leg"><div class="dot" style="background:#333"></div>Roof & Overhangs</div>
+        <div class="leg"><div class="dot" style="background:#99b3cc;opacity:0.85"></div>Windows (550)</div>
+        <div class="leg"><div class="dot" style="background:#222"></div>Doors (4)</div>
+        <div class="leg"><div class="dot" style="background:#3d8c33"></div>Trees & Shade</div>
+        <div class="leg"><div class="dot" style="background:#999890"></div>Ground Plane</div>
       </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <span>Tap the blue <b>"View in AR"</b> button above → point camera at a flat surface → your building appears!</span>
-      </div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <span>Walk around it, pinch to scale it up or down, tap to place it</span>
+    </div>
+
+    <div class="card" style="grid-column:1/-1">
+      <h3>📊 Model Statistics</h3>
+      <div class="stats">
+        <div><div class="stat-val">1,731</div><div class="stat-lbl">Total Surfaces</div></div>
+        <div><div class="stat-val">550</div><div class="stat-lbl">Windows</div></div>
+        <div><div class="stat-val">25</div><div class="stat-lbl">Zones</div></div>
+        <div><div class="stat-val">1,462 m²</div><div class="stat-lbl">Total Area</div></div>
       </div>
     </div>
   </div>
-
-  <div class="info-card">
-    <strong>🎨 Model Colour Legend</strong>
-    <div class="legend">
-      <div class="legend-item"><div class="legend-dot" style="background:#ebe3d1;border:1px solid #ccc"></div> Exterior Walls</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#403224"></div> Roof</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#8dc0e6;opacity:0.8"></div> Windows (550)</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#7a4f2e"></div> Doors (4)</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#4d9940"></div> Shade / Trees</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#e6e9df"></div> Interior Walls</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#b8b29a"></div> Floors</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#403c35"></div> Underground</div>
-    </div>
-  </div>
-
 </div>
 
-<footer>Built from DesignBuilder gbXML · 1731 surfaces · 554 windows & doors</footer>
-
+<footer>NTIC Building · DesignBuilder gbXML → AR · Wissal Bouguerroudja</footer>
 </body>
 </html>
