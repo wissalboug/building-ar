@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Building AR Viewer</title>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0f1923;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      width: 100%;
+      background: linear-gradient(135deg, #1a2a3a, #0d1f2d);
+      padding: 18px 24px;
+      text-align: center;
+      border-bottom: 2px solid #2a9fd6;
+      box-shadow: 0 4px 20px rgba(42,159,214,0.3);
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #2a9fd6;
+      letter-spacing: 1px;
+    }
+
+    header p {
+      font-size: 0.8rem;
+      color: #8ab4c8;
+      margin-top: 4px;
+    }
+
+    .viewer-container {
+      width: 100%;
+      max-width: 900px;
+      padding: 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    model-viewer {
+      width: 100%;
+      height: 65vh;
+      border-radius: 16px;
+      border: 1px solid #2a9fd6;
+      background: linear-gradient(180deg, #1a2f3f 0%, #0d1923 100%);
+      box-shadow: 0 8px 40px rgba(42,159,214,0.2);
+      --poster-color: transparent;
+    }
+
+    .ar-btn-wrapper {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .ar-button {
+      background: linear-gradient(135deg, #2a9fd6, #1a7aaa);
+      color: white;
+      border: none;
+      padding: 14px 32px;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 20px rgba(42,159,214,0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ar-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(42,159,214,0.6);
+    }
+
+    .info-card {
+      background: #1a2a3a;
+      border-radius: 12px;
+      padding: 16px 20px;
+      border: 1px solid #2a3f52;
+      font-size: 0.85rem;
+      color: #8ab4c8;
+      line-height: 1.6;
+    }
+
+    .info-card strong {
+      color: #2a9fd6;
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+    }
+
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .step-num {
+      background: #2a9fd6;
+      color: white;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .legend {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+    }
+
+    .legend-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    footer {
+      padding: 16px;
+      font-size: 0.75rem;
+      color: #4a6a7a;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🏛️ Building AR Viewer</h1>
+  <p>Interactive 3D Model · Augmented Reality Ready</p>
+</header>
+
+<div class="viewer-container">
+
+  <model-viewer
+    id="viewer"
+    src="wissal_rami_v3.glb"
+    alt="3D Building Model"
+    ar
+    ar-modes="webxr scene-viewer quick-look"
+    camera-controls
+    auto-rotate
+    auto-rotate-delay="1000"
+    rotation-per-second="20deg"
+    shadow-intensity="1.2"
+    shadow-softness="0.8"
+    exposure="1.1"
+    environment-image="legacy"
+    style="--progress-bar-color: #2a9fd6;"
+  >
+    <button slot="ar-button" class="ar-button">
+      📱 View in AR (Place on Table)
+    </button>
+  </model-viewer>
+
+  <div class="info-card">
+    <strong>📱 How to use AR on your Android phone</strong>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <span>Make sure both files (<b>building_ar_viewer.html</b> and <b>wissal_rami_v3.glb</b>) are in the <b>same folder</b> on your phone</span>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <span>Open <b>Chrome</b> on your Android phone → tap the menu → <b>Open file</b> → select this HTML file</span>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <span>Tap the blue <b>"View in AR"</b> button above → point camera at a flat surface → your building appears!</span>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <span>Walk around it, pinch to scale it up or down, tap to place it</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-card">
+    <strong>🎨 Model Colour Legend</strong>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#ebe3d1;border:1px solid #ccc"></div> Exterior Walls</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#403224"></div> Roof</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#8dc0e6;opacity:0.8"></div> Windows (550)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#7a4f2e"></div> Doors (4)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#4d9940"></div> Shade / Trees</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#e6e9df"></div> Interior Walls</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#b8b29a"></div> Floors</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#403c35"></div> Underground</div>
+    </div>
+  </div>
+
+</div>
+
+<footer>Built from DesignBuilder gbXML · 1731 surfaces · 554 windows & doors</footer>
+
+</body>
+</html>
